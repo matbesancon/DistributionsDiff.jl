@@ -8,22 +8,6 @@
     # return (v, pullback)
 # end
 
-function CRC.rrule(::typeof(logpdf), d::Exponential, x)
-    v = pdf(d, x)
-    function pullback(y) where {T}
-        g = @thunk(gradlogpdf(d, x))
-        dθ = @thunk(
-            if x < 0
-                zero(x)
-            else
-                -inv(d.θ) + x * inv(d.θ^2)
-            end
-        )
-        return (NO_FIELDS, g, dθ)
-    end
-    return (v, pullback)
-end
-
 function CRC.rrule(::Type{D}, θ) where {D <: Exponential}
     function D_pullback(dy)
         return (NO_FIELDS, dy.θ)

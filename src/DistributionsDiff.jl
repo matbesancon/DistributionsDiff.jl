@@ -5,6 +5,8 @@ import ChainRulesCore
 const CRC = ChainRulesCore
 using ChainRulesCore: NO_FIELDS, @thunk
 
-include("univariates.jl")
+using SpecialFunctions: loggamma, digamma
 
+include("univariates.jl")
+include("logpdf.jl")
 end # module

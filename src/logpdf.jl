@@ -33,20 +33,17 @@ function CRC.rrule(::typeof(logpdf), d::Arcsine, x)
         T = promote_type(typeof(x), partype(d))
         (a, b) = support(d)
         g = @thunk(gradlogpdf(d, x))
-        da = @thunk begin
-            if x > b || x < a
+        da = if x > b || x < a
                 zero(T)
             else
                 inv(2 * (x - a))
             end
-        end
-        db = @thunk begin
-            if x > b || x < a
+        
+        db = if x > b || x < a
                 zero(T)
             else
                 -inv(2 * (b - x))
             end
-        end
         return (NO_FIELDS, g, da, db)
     end
     return (v, pullback)
@@ -58,20 +55,16 @@ function CRC.rrule(::typeof(logpdf), d::Beta, x)
         T = promote_type(typeof(x), partype(d))
         (α, β) = params(d)
         g = @thunk(gradlogpdf(d, x))
-        dα = @thunk begin
-            if !(0 ≤ x ≤ 1)
+        dα = if !(0 ≤ x ≤ 1)
                 zero(T)
             else
                 log(x) - digamma(α) + digamma(α + β)
             end
-        end
-        dβ = @thunk begin
-            if !(0 ≤ x ≤ 1)
+        dβ = if !(0 ≤ x ≤ 1)
                 zero(T)
             else
                 log(1 - x) - digamma(β) + digamma(α + β)
             end
-        end
         return (NO_FIELDS, g, dα, dβ)
     end
     return (v, pullback)
